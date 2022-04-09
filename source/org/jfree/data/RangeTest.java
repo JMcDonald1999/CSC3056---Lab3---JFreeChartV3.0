@@ -7,36 +7,96 @@ import junit.framework.TestCase;
 public class RangeTest extends TestCase {
 	
 	@Test
-	public void testCombineReturnsNullRangeInstanceForTwoNullArguments() {
-		Range rangeObjectUnderTest = null;
-		Range otherRangeObjectUnderTest = null;
-		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
-		assertNull(combinedRange);
+	public void testRangeConstructorThrowsIllegalArgumentExceptionWhenLowerIsGreaterThanUpper() {
+		try {
+			Range rangeObjectUnderTest = new Range (10.0, 0.0);
+			fail("Exception should have been thrown");
+		} catch (IllegalArgumentException e) {
+			return;
+		}
 	}
 	
 	@Test
-	public void testCombineReturnsFirstRangeArgumentWhenSecondRangeArgumentIsNull() {
-		Range rangeObjectUnderTest = new Range(3.0, 7.0);
-		Range otherRangeObjectUnderTest = null;
-		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
-		assertEquals("The non-null Range should be returned", new Range(3.0, 7.0), combinedRange);
+	public void testGetLowerBoundReturnsLowerBound() {
+		Range rangeObjectUnderTest = new Range (5.0, 10.0);
+		assertEquals(5.0, rangeObjectUnderTest.getLowerBound());
 	}
 	
 	@Test
-	public void testCombineReturnsSecondRangeArgumentWhenFirstRangeArgumentIsNull() {
-		Range rangeObjectUnderTest = null;
-		Range otherRangeObjectUnderTest = new Range (2.0, 6.0);
-		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
-		assertEquals("The non-null Range should be returned", new Range(2.0, 6.0), combinedRange);
+	public void testGetUpperBoundReturnsUpperBound() {
+		Range rangeObjectUnderTest = new Range (5.0, 10.0);
+		assertEquals(10.0, rangeObjectUnderTest.getUpperBound());
 	}
 	
 	@Test
-	public void testCombineReturnsCorrectRangeInstanceForValidArguments() {
-		Range rangeObjectUnderTest = new Range(3.0, 7.0);
-		Range otherRangeObjectUnderTest = new Range(2.0, 6.0);
-		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
-		assertEquals("The combined range should take the lower bound from Argument 2 and the"
-				+ "upper bound from Argument 1", new Range(2.0, 7.0), combinedRange);
+	public void testGetLengthReturnsLength() {
+		Range rangeObjectUnderTest = new Range (5.0, 10.0);
+		assertEquals(5.0, rangeObjectUnderTest.getLength());
+	}
+	
+	@Test
+	public void testGetCentralValueReturnsCentralValue() {
+		Range rangeObjectUnderTest = new Range (5.0, 10.0);
+		assertEquals(7.5, rangeObjectUnderTest.getCentralValue());
+	}
+	
+	@Test
+	public void testContainsReturnsFalseForArgumentLessThanLowerBound() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertFalse("4.9 is less than the lower bound of 5.0 so method should return false",
+				rangeObjectUnderTest.contains(4.9));
+	}
+	
+	@Test
+	public void testContainsReturnsTrueForLowerBound() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue("Lower bound is within the range so method should return true",
+				rangeObjectUnderTest.contains(5.0));
+	}
+	
+	@Test
+	public void testContainsReturnsTrueForArgumentComfortablyInsideRange() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue("10.0 is well within the range so method should return true",
+				rangeObjectUnderTest.contains(10.0));
+	}
+		
+	@Test
+	public void testContainsReturnsTrueForUpperBound() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue("Upper bound is within the range so method should return true",
+				rangeObjectUnderTest.contains(15.0));
+	}
+	
+	@Test
+	public void testContainsReturnsFalseForArgumentGreaterThanUpperBound() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertFalse("15.1 is more than the upper bound of 15.0 so method should return false",
+				rangeObjectUnderTest.contains(15.1));
+	}
+	
+	@Test
+	public void testIntersectsReturnsFalseIfUpperArgumentIsLessThanRangesLowerBound() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue(rangeObjectUnderTest.intersects(3.0, 4.0));
+	}
+	
+	@Test
+	public void testIntersectsReturnsFalseIfLowerArgumentIsMoreThanRangesUpperBound() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue(rangeObjectUnderTest.intersects(16.0, 20.0));
+	}
+	
+	@Test
+	public void testIntersectsReturnsTrueIfOnlyLowerBoundIntersects() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue(rangeObjectUnderTest.intersects(12.0, 20.0));
+	}
+	
+	@Test
+	public void testIntersectsReturnsTrueIfOnlyUpperBoundIntersects() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue(rangeObjectUnderTest.intersects(3.0, 7.0));
 	}
 	
 	@Test
@@ -75,38 +135,36 @@ public class RangeTest extends TestCase {
 	}
 	
 	@Test
-	public void testContainsReturnsFalseForArgumentLessThanLowerBound() {
-		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertFalse("4.9 is less than the lower bound of 5.0 so method should return false",
-				rangeObjectUnderTest.contains(4.9));
+	public void testCombineReturnsNullRangeInstanceForTwoNullArguments() {
+		Range rangeObjectUnderTest = null;
+		Range otherRangeObjectUnderTest = null;
+		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
+		assertNull(combinedRange);
 	}
 	
 	@Test
-	public void testContainsReturnsTrueForLowerBound() {
-		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertTrue("Lower bound is within the range so method should return true",
-				rangeObjectUnderTest.contains(5.0));
+	public void testCombineReturnsFirstRangeArgumentWhenSecondRangeArgumentIsNull() {
+		Range rangeObjectUnderTest = new Range(3.0, 7.0);
+		Range otherRangeObjectUnderTest = null;
+		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
+		assertEquals("The non-null Range should be returned", new Range(3.0, 7.0), combinedRange);
 	}
 	
 	@Test
-	public void testContainsReturnsTrueForArgumentComfortablyInsideRange() {
-		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertTrue("10.0 is well within the range so method should return true",
-				rangeObjectUnderTest.contains(10.0));
-	}
-		
-	@Test
-	public void testContainsReturnsTrueForUpperBound() {
-		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertTrue("Upper bound is within the range so method should return true",
-				rangeObjectUnderTest.contains(15.0));
+	public void testCombineReturnsSecondRangeArgumentWhenFirstRangeArgumentIsNull() {
+		Range rangeObjectUnderTest = null;
+		Range otherRangeObjectUnderTest = new Range (2.0, 6.0);
+		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
+		assertEquals("The non-null Range should be returned", new Range(2.0, 6.0), combinedRange);
 	}
 	
 	@Test
-	public void testContainsReturnsFalseForArgumentGreaterThanUpperBound() {
-		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertFalse("15.1 is more than the upper bound of 15.0 so method should return false",
-				rangeObjectUnderTest.contains(15.1));
+	public void testCombineReturnsCorrectRangeInstanceForValidArguments() {
+		Range rangeObjectUnderTest = new Range(3.0, 7.0);
+		Range otherRangeObjectUnderTest = new Range(2.0, 6.0);
+		Range combinedRange = Range.combine(rangeObjectUnderTest, otherRangeObjectUnderTest);
+		assertEquals("The combined range should take the lower bound from Argument 2 and the"
+				+ "upper bound from Argument 1", new Range(2.0, 7.0), combinedRange);
 	}
 	
 	@Test
@@ -158,6 +216,24 @@ public class RangeTest extends TestCase {
 	}
 	
 	@Test
+	public void testExpandThrowsIllegalArgumentExceptionForNullRangeArgument() {
+		Range rangeObjectUnderTest = null;
+		try {
+			Range.expand(rangeObjectUnderTest, 1.00, 1.00);
+			fail("Exception should have been thrown");
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+	}
+	
+	@Test
+	public void testExpandCorrectlyAltersRangeWithValidMargins() {
+		Range rangeObjectUnderTest = new Range(2.00, 6.00);
+		Range expandedRange = Range.expand(rangeObjectUnderTest, 0.25, 0.5);
+		assertEquals(new Range(1.00, 8.00), expandedRange);
+	}
+	
+	@Test
 	public void testShiftThrowsIllegalArgumentExceptionForNullRangeArgument() {
 		Range rangeObjectUnderTest = null;
 		try {
@@ -174,9 +250,9 @@ public class RangeTest extends TestCase {
 		Range shiftResult = Range.shift(rangeObjectUnderTest, 0.0);
 		assertEquals("A shift of 0 means the range should be the same", new Range(20.0, 30.0), shiftResult);
 	}
-	
+		
 	@Test
-	public void testShiftCorrectlyDoesNotZeroCrossWhenPartOfRangeGoesNegativeToPositive() {
+	public void testShiftDoesNotCrossZeroWhenPartOfRangeGoesNegativeToPositiveWhenZeroCrossingIsFalse() {
 		Range zeroCrossingRange = new Range(-5.0, 5.0);
 		Range shiftResult = Range.shift(zeroCrossingRange, 10.0);
 		assertEquals("the lower boundary cannot cross 0 into the positives so should be set to 0",
@@ -184,7 +260,7 @@ public class RangeTest extends TestCase {
 	}
 	
 	@Test
-	public void testShiftCorrectlyDoesNotZeroCrossWhenPartOfRangeGoesPositiveToNegative() {
+	public void testShiftDoesNotCrossZeroWhenPartOfRangeGoesPositiveToNegativeWhenZeroCrossingIsFalse() {
 		Range zeroCrossingRange = new Range(-5.0, 5.0);
 		Range shiftResult = Range.shift(zeroCrossingRange, -10.0);
 		assertEquals("the upper boundary cannot cross 0 into the negatives so should be set to 0",
@@ -192,17 +268,46 @@ public class RangeTest extends TestCase {
 	}
 	
 	@Test
-	public void testShiftCorrectlyShiftsRangeDownWhenThereIsNoZeroCrossing() {
+	public void testShiftCorrectlyShiftsRangeDownWhenZeroCrossingIsFalse() {
 		Range safeRange = new Range(20.0, 30.0);
 		Range shiftResult = Range.shift(safeRange, -10.0);
 		assertEquals("A shift of -10 means the range should go down by 10", new Range(10.0, 20.0), shiftResult);
 	}
 	
 	@Test
-	public void testShiftCorrectlyShiftsRangeUpWhenThereIsNoZeroCrossing() {
+	public void testShiftCorrectlyShiftsRangeUpWhenZeroCrossingIsFalse() {
 		Range safeRange = new Range(20.0, 30.0);
 		Range shiftResult = Range.shift(safeRange, 10.0);
 		assertEquals("A shift of 10 means the range should go up by 10", new Range(30.0, 40.0), shiftResult);
+	}
+	
+	@Test
+	public void testShiftCrossesZeroWhenZeroCrossingIsTrue() {
+		Range zeroCrossingRange = new Range(-5.0, 5.0);
+		Range shiftResult = Range.shift(zeroCrossingRange, 10.0, true);
+		assertEquals("the lower boundary can cross 0 into the positives so should be set to 5",
+				new Range(5.0, 15.0), shiftResult);
+	}
+	
+	@Test
+	public void testEqualsReturnsFalseForRangeWithDifferentLowerBoundary() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		Range anotherRangeObjectUnderTest = new Range(3.0, 15.0);
+		assertFalse(rangeObjectUnderTest.equals(anotherRangeObjectUnderTest));
+	}
+	
+	@Test
+	public void testEqualsReturnsFalseForRangeWithDifferentUpperBoundary() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		Range anotherRangeObjectUnderTest = new Range(5.0, 20.0);
+		assertFalse(rangeObjectUnderTest.equals(anotherRangeObjectUnderTest));
+	}
+	
+	@Test
+	public void testHashCodeReturnsSameValueForDifferentRangeInstancesWithSameFields() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		Range anotherRangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue(rangeObjectUnderTest.hashCode() == anotherRangeObjectUnderTest.hashCode());
 	}
 
 }
