@@ -78,13 +78,13 @@ public class RangeTest extends TestCase {
 	@Test
 	public void testIntersectsReturnsFalseIfUpperArgumentIsLessThanRangesLowerBound() {
 		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertTrue(rangeObjectUnderTest.intersects(3.0, 4.0));
+		assertFalse(rangeObjectUnderTest.intersects(3.0, 4.0));
 	}
 	
 	@Test
 	public void testIntersectsReturnsFalseIfLowerArgumentIsMoreThanRangesUpperBound() {
 		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		assertTrue(rangeObjectUnderTest.intersects(16.0, 20.0));
+		assertFalse(rangeObjectUnderTest.intersects(16.0, 20.0));
 	}
 	
 	@Test
@@ -178,9 +178,9 @@ public class RangeTest extends TestCase {
 	@Test
 	public void testExpandToIncludeCorrectlyExtendsRangeForValueJustOutsideLowerBound() {
 		Range rangeObjectUnderTest = new Range(5.0, 15.0);
-		Range expandToIncludeResult = Range.expandToInclude(rangeObjectUnderTest, 4.0);
+		Range expandToIncludeResult = Range.expandToInclude(rangeObjectUnderTest, 4.9);
 		assertEquals("value is below the range so lower boundary should change",
-				new Range(4.0, 15.0), expandToIncludeResult);
+				new Range(4.9, 15.0), expandToIncludeResult);
 	}
 	
 	@Test
@@ -301,6 +301,13 @@ public class RangeTest extends TestCase {
 		Range rangeObjectUnderTest = new Range(5.0, 15.0);
 		Range anotherRangeObjectUnderTest = new Range(5.0, 20.0);
 		assertFalse(rangeObjectUnderTest.equals(anotherRangeObjectUnderTest));
+	}
+	
+	@Test
+	public void testEqualsReturnsTrueForRangeWithSameBoundaries() {
+		Range rangeObjectUnderTest = new Range(5.0, 15.0);
+		Range anotherRangeObjectUnderTest = new Range(5.0, 15.0);
+		assertTrue(rangeObjectUnderTest.equals(anotherRangeObjectUnderTest));
 	}
 	
 	@Test
